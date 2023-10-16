@@ -11,6 +11,7 @@
 #include <stdbool.h>
 #include <sys/wait.h>
 #include <spawn.h>
+#include <ctype.h>
 
 #define IPC_RESULT_ERROR (-1)
 #define FILENAME "tic_tac_toe.c"
@@ -31,6 +32,7 @@ char* turn(char* gameBoard);
 //global variable
 int n;
 bool isWinner;
+int winValue;
 
 int main (int argc, char* argv[])
 {
@@ -41,12 +43,17 @@ int main (int argc, char* argv[])
 		exit(0);
 	}
 	//Check for too few inputs
-	else if(argc == 1)
+	else if(argc < 2)
 	{
 		printf("Error, too few arguments supplied.\n");
 		exit(0);
 	}
 	//ERROR DETECTION: CHECK FOR WRONG INPUT IN ARGV[1]
+	if(isdigit(atoi(argv[1])))
+	{
+		printf("Error: please only input the board size as the second argument.\n");
+		exit(0);
+	}
 
 	//If we've made it here, then there is only 2 arguments
 	//create an NxN board, where N is the given argument
@@ -79,47 +86,85 @@ int main (int argc, char* argv[])
 	int status;
 	int child_id;
 
+	/*
 	if(0 != posix_spawn(&child_id, childArguments[0], NULL, NULL, childArguments, environ))
 	{
 		perror("spawn failed");
 		exit(1);
 	}
+	*/
 
 	while(!isWinner)
 	{
+		//before x's turn, check for a win
+		winValue = 0;
+
+		winValue += checkWin(gameBoard);
+		if(winValue == 1)
+		{
+			//output to player1 that they won, and output to player2 that they lost
+			printf("Player 1 wins!\n");
+			isWinner = true;
+			break;
+		}
+		else if(winValue == 2)
+		{
+			//output to player 2 that they won, and output to player 1 that they lost
+			printf("Player 1 loses!\n");
+			isWinner = true;
+			break;
+		}
+		else if(winValue == -1)
+		{	
+			printf("The game is a draw!\n");
+			isWinner = true;
+			break;
+		}
+
+
+		printBoard(gameBoard);
+
 		//Take the turn and return the updated gameBoard
 		turn(gameBoard);
+
+		//after x's turn, check for a winner
+		winValue = 0;
+
+		winValue += checkWin(gameBoard);
+		if(winValue == 1)
+		{
+			printBoard(gameBoard);
+			//output to player1 that they won, and output to player2 that they lost
+			printf("Player 1 wins!\n");
+			isWinner = true;
+		}
+		else if(winValue == 2)
+		{
+			printBoard(gameBoard);
+			//output to player 2 that they won, and output to player 1 that they lost
+			printf("Player 1 loses!\n");
+			isWinner = true;
+		}
+		else if(winValue == -1)
+		{	
+			printBoard(gameBoard);
+			printf("The game is a draw!\n");
+			isWinner = true;
+		}
+
+		//after x's turn, call o.
+		if(0 != posix_spawn(&child_id, childArguments[0], NULL, NULL, childArguments, environ))
+		{
+			perror("spawn failed");
+			exit(1);
+		}
+
+		wait(&child_id);
 	}
 }
 
 char* turn(char* gameBoard)
 {
-
-	int winValue = 0;
-	//print the board, then check for a winner
-	printBoard(gameBoard);
-	winValue += checkWin(gameBoard);
-	if(winValue == 1)
-	{
-		//output to player1 that they won, and output to player2 that they lost
-		printf("Player 1 wins!\n");
-		isWinner = true;
-		return gameBoard;
-	}
-	else if(winValue == 2)
-	{
-		//output to player 2 that they won, and output to player 1 that they lost
-		printf("Player 1 loses!\n");
-		isWinner = true;
-		return gameBoard;
-	}
-	else if(winValue == -1)
-	{
-		printf("The game is a draw!\n");
-		isWinner = true;
-		return gameBoard;
-	}
-
 	//get the row and column value to place the piece at
 	printf("It is your turn! Please enter the row you wish to place a piece at.\n");
 	int row;

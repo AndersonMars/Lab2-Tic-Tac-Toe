@@ -27,7 +27,6 @@ bool destroy_shared_memory(char *filename);
 
 //global variables
 int n;
-bool isWinner;
 
 int main(int argc, char* argv[])
 {
@@ -51,10 +50,54 @@ int main(int argc, char* argv[])
 	char* gameBoard = attach_shared_memory(FILENAME, boardSize);
 	
 
-	while(!isWinner)
+	//check for the win before o's turn
+	int winValue = 0;
+
+	winValue += checkWin(gameBoard);
+	if(winValue == 1)
 	{
-		//take the turn and return the updated gameBoard
-		turn(gameBoard);
+		//output to player1 that they won, and output to player2 that they lost
+		printf("Player 2 loses!\n");
+		return 0;
+	}
+	else if(winValue == 2)
+	{
+		//output to player 2 that they won, and output to player 1 that they lost
+		printf("Player 2 wins!\n");
+		return 0;
+	}
+	else if(winValue == -1)
+	{	
+		printf("The game is a draw!\n");
+		return 0;
+	}
+
+
+	//take the turn and return the updated gameBoard
+	turn(gameBoard);
+
+	//check for the win after o's turn
+	winValue = 0;
+
+	winValue += checkWin(gameBoard);
+	if(winValue == 1)
+	{
+		//output to player1 that they won, and output to player2 that they lost
+		printf("Player 2 loses!\n");
+		return 0;
+	}
+	else if(winValue == 2)
+	{
+		printBoard(gameBoard);
+		//output to player 2 that they won, and output to player 1 that they lost
+		printf("Player 2 wins!\n");
+		return 0;
+	}
+	else if(winValue == -1)
+	{	
+		printBoard(gameBoard);
+		printf("The game is a draw!\n");
+		return 0;
 	}
 }
 
@@ -62,30 +105,8 @@ int main(int argc, char* argv[])
 char* turn(char* gameBoard)
 {
 
-	int winValue = 0;
 	//print the board, then check for a winner
 	printBoard(gameBoard);
-	winValue += checkWin(gameBoard);
-	if(winValue == 1)
-	{
-		//output to player1 that they won, and output to player2 that they lost
-		printf("Player 2 loses!\n");
-		isWinner = true;
-		return gameBoard;
-	}
-	else if(winValue == 2)
-	{
-		//output to player 2 that they won, and output to player 1 that they lost
-		printf("Player 2 wins!\n");
-		isWinner = true;
-		return gameBoard;
-	}
-	else if(winValue == -1)
-	{
-		printf("The game is a draw!\n");
-		isWinner = true;
-		return gameBoard;
-	}
 
 	//get the row and column value to place the piece at
 	printf("It is your turn! Please enter the row you wish to place a piece at.\n");
@@ -115,7 +136,7 @@ char* turn(char* gameBoard)
 	else
 	{
 		//add the users input to the board, since it is a 1d array, the location is x + n * y.
-		gameBoard[(row-1) + (n * (column - 1))] = 'x';
+		gameBoard[(row-1) + (n * (column - 1))] = 'o';
 		
 	}
 
