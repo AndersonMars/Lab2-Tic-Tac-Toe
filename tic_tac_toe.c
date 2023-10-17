@@ -68,7 +68,7 @@ int main (int argc, char* argv[])
 	
 	if(gameBoard == NULL)
 	{
-		printf("ERROR: Couldn't create shared memory\n");
+		printf("Error: Couldn't create shared memory\n");
 		return -1;
 	}
 	
@@ -89,6 +89,7 @@ int main (int argc, char* argv[])
 		{
 			//output to player1 that they won, and output to player2 that they lost
 			printf("Player 1 wins!\n");
+			detach_shared_memory(gameBoard);
 			isWinner = true;
 			break;
 		}
@@ -96,12 +97,14 @@ int main (int argc, char* argv[])
 		{
 			//output to player 2 that they won, and output to player 1 that they lost
 			printf("Player 1 loses!\n");
+			detach_shared_memory(gameBoard);
 			isWinner = true;
 			break;
 		}
 		else if(winValue == -1)
 		{	
 			printf("The game is a draw!\n");
+			detach_shared_memory(gameBoard);
 			isWinner = true;
 			break;
 		}
@@ -121,6 +124,7 @@ int main (int argc, char* argv[])
 			printBoard(gameBoard, n);
 			//output to player1 that they won, and output to player2 that they lost
 			printf("Player 1 wins!\n");
+			detach_shared_memory(gameBoard);
 			isWinner = true;
 		}
 		else if(winValue == 2)
@@ -128,12 +132,14 @@ int main (int argc, char* argv[])
 			printBoard(gameBoard, n);
 			//output to player 2 that they won, and output to player 1 that they lost
 			printf("Player 1 loses!\n");
+			detach_shared_memory(gameBoard);
 			isWinner = true;
 		}
 		else if(winValue == -1)
 		{	
 			printBoard(gameBoard, n);
 			printf("The game is a draw!\n");
+			detach_shared_memory(gameBoard);
 			isWinner = true;
 		}
 
@@ -146,4 +152,6 @@ int main (int argc, char* argv[])
 
 		wait(&child_id);
 	}
+
+	destroy_shared_memory(gameBoard);
 }
