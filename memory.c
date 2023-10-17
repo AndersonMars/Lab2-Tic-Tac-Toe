@@ -1,38 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <string.h>
+#include <sys/shm.h>
+#include <stdbool.h>
+#include <sys/wait.h>
+#include <spawn.h>
+#include <ctype.h>
+
+
 #include "memory.h"
 
 char* turn(char* gameBoard, char piece, int n)
 {
 
-	//get the row and column value to place the piece at
-	printf("It is your turn! Please enter the row you wish to place a piece at.\n");
-	int row;
-
-	scanf("%i", &row);
-
-	printf("Please enter the column you wish to place a piece at.\n");
-	int column;
-
-	scanf("%i", &column);
-
-	//check if input is out of bounds
-	if(column > n || row > n)
+	printf("It is your turn! ");
+	while(true)
 	{
-		printf("Invalid move, this goes beyond the boundaires of the board, try again.\n");
-	}
-	//check if piece is already there
-	else if(gameBoard[(row-1) + (n * (column - 1))] == 'x')
-	{
-		printf("Invalid move, there is already a piece there.\n");
-	}
-	else if(gameBoard[(row-1) + (n * (column - 1))] == 'o')
-	{
-		printf("Invalid move, there is already a piece there.\n");
-	}
-	else
-	{
-		//add the users input to the board, since it is a 1d array, the location is x + n * y.
-		if(piece == 'o') gameBoard[(row-1) + (n * (column - 1))] = 'o';
-		else gameBoard[(row-1) + (n * (column - 1))] = 'x';
+		//get the row and column value to place the piece at
+		printf("Please enter the row you wish to place a piece at.\n");
+		int row;
+
+		scanf("%i", &row);
+
+		printf("Please enter the column you wish to place a piece at.\n");
+		int column;
+
+		scanf("%i", &column);
+
+		//check if input is out of bounds
+		if(column > n || row > n)
+		{
+			printf("Invalid move, this goes beyond the boundaires of the board, try again.\n");
+		}
+		//check if piece is already there
+		else if(gameBoard[(row-1) + (n * (column - 1))] == 'x')
+		{
+			printf("Invalid move, there is already a piece there.\n");
+		}
+		else if(gameBoard[(row-1) + (n * (column - 1))] == 'o')
+		{
+			printf("Invalid move, there is already a piece there.\n");
+		}
+		else
+		{	
+			//add the users input to the board, since it is a 1d array, the location is x + n * y.
+			if(piece == 'o') gameBoard[(row-1) + (n * (column - 1))] = 'o';
+			else gameBoard[(row-1) + (n * (column - 1))] = 'x';
+			break;
+		}
 	}
 
 	return gameBoard;
