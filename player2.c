@@ -13,7 +13,7 @@
 #include <spawn.h>
 
 //include memory.h for the shared memory functions
-#include "memory.h"
+#include "memory.c"
 
 //filename is player 1
 #define FILENAME "tic_tac_toe.c"

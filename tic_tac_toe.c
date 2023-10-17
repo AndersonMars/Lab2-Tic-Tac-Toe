@@ -14,16 +14,13 @@
 #include <ctype.h>
 
 //include memory.h for the shared memory functions
-#include "memory.h"
+#include "memory.c"
 
 #define IPC_RESULT_ERROR (-1)
 #define FILENAME "tic_tac_toe.c"
 
 //environ for spawn call
 extern char **environ;
-
-//functions
-char* populateBoard(char* gameBoard);
 
 //global variable
 int n;
@@ -76,7 +73,7 @@ int main (int argc, char* argv[])
 	}
 	
 	//populate the board
-	gameBoard = populateBoard(gameBoard);
+	gameBoard = populateBoard(gameBoard, n);
 	
 	//create a separate process that will represent player 2
 	int status;
@@ -149,17 +146,4 @@ int main (int argc, char* argv[])
 
 		wait(&child_id);
 	}
-}
-
-char* populateBoard(char* gameBoard)
-{
-	int size = n * n;
-	for(int i = 0; i < size; i += n)
-	{
-		for(int j = 0; j < n; j++)
-		{
-			gameBoard[i + j] = '-';
-		}
-	}
-	return gameBoard;
 }
