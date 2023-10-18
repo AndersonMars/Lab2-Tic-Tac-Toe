@@ -19,12 +19,12 @@ char* turn(char* gameBoard, char piece, int n)
 	while(true)
 	{
 		//get the row and column value to place the piece at
-		printf("Please enter the row you wish to place a piece at.\n");
+		printf("Please enter the x coordinate you wish to place a piece at.\n");
 		int row;
 
 		scanf("%i", &row);
 
-		printf("Please enter the column you wish to place a piece at.\n");
+		printf("Please enter the y coordinate you wish to place a piece at.\n");
 		int column;
 
 		scanf("%i", &column);
